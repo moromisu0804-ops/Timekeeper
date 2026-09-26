@@ -46,6 +46,9 @@ const toggleBtn = document.getElementById("toggle-btn");
 const elapsedDisplay = document.getElementById("elapsed-display");
 const statusLabel = document.getElementById("status-label");
 
+const debugDateInput = document.getElementById("debug-date");
+const debugAddBtn = document.getElementById("debug-add-btn");
+
 const rangeStartInput = document.getElementById("range-start");
 const rangeEndInput = document.getElementById("range-end");
 const aggregateBtn = document.getElementById("aggregate-btn");
@@ -93,6 +96,12 @@ function startOfDay(date) {
 function addDays(date, days) {
   const d = new Date(date);
   d.setDate(d.getDate() + days);
+  return d;
+}
+
+function addHours(date, hours) {
+  const d = new Date(date);
+  d.setHours(d.getHours() + hours);
   return d;
 }
 
@@ -167,6 +176,7 @@ onAuthStateChanged(auth, async (user) => {
   subscribeRecords(user.uid);
   setQuickRange("today");
   runAggregate();
+  debugDateInput.value = dateInputValue(new Date());
 });
 
 // ---------- トグルスイッチ ----------
@@ -241,6 +251,35 @@ toggleBtn.addEventListener("click", async () => {
     alert("エラーが発生しました: " + err.message);
   } finally {
     toggleBtn.disabled = false;
+  }
+});
+
+// ---------- デバッグ用: 指定日に+1時間の記録を追加 ----------
+debugAddBtn.addEventListener("click", async () => {
+  if (!currentUser) return;
+  const dateStr = debugDateInput.value;
+  if (!dateStr) {
+    alert("日付を選択してください。");
+    return;
+  }
+
+  const start = new Date(`${dateStr}T12:00:00`);
+  const end = addHours(start, 1);
+
+  debugAddBtn.disabled = true;
+  try {
+    await addDoc(collection(db, "users", currentUser.uid, "sessions"), {
+      start: Timestamp.fromDate(start),
+      end: Timestamp.fromDate(end),
+      durationSeconds: 3600,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    runAggregate();
+  } catch (err) {
+    alert("追加に失敗しました: " + err.message);
+  } finally {
+    debugAddBtn.disabled = false;
   }
 });
 

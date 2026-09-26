@@ -38,6 +38,16 @@
           <button id="toggle-btn">作業開始</button>
           <div id="elapsed-display">00:00:00</div>
           <div id="status-label">停止中</div>
+
+          <div class="debug-box">
+            <div class="debug-label">デバッグ用：指定日に+1時間の記録を追加</div>
+            <div class="debug-controls">
+              <input type="date" id="debug-date" />
+              <button id="debug-add-btn" class="btn-secondary btn-small">
+                +1時間追加
+              </button>
+            </div>
+          </div>
         </section>
 
         <!-- 集計・グラフ -->
