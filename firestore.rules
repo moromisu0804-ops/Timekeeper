@@ -1,0 +1,20 @@
+rules_version = '2';
+
+// このアプリのデータは users/{ログインユーザーのUID}/... という階層にのみ保存されます。
+// 「自分自身のデータであること」に加えて「許可されたメールアドレスであること」の
+// 両方を満たす場合のみ読み書きを許可します。
+//
+// 【重要】許可するメールアドレスを変更した場合は、
+// public/firebase-config.js の ALLOWED_EMAILS も必ず同じ内容に合わせて
+// 変更してください（片方だけ変えると、実際のアクセス制御と画面上の表示が
+// 食い違ってしまいます）。
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['moro.misu0804@gmail.com'];
+    }
+  }
+}
