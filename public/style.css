@@ -1,0 +1,246 @@
+:root {
+  --color-bg: #f5f6fa;
+  --color-surface: #ffffff;
+  --color-text: #1f2430;
+  --color-muted: #6b7280;
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-success: #16a34a;
+  --color-border: #e5e7eb;
+  --radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+header.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+header.app-header h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+.btn-secondary:hover {
+  background: #f0f0f2;
+}
+
+.btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+.btn-danger:hover {
+  background: var(--color-danger-dark);
+}
+
+.btn-small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+}
+
+/* --- ログイン/権限なし画面 --- */
+#login-screen,
+#denied-screen {
+  text-align: center;
+  padding: 64px 16px;
+}
+
+#login-screen h2,
+#denied-screen h2 {
+  margin-bottom: 12px;
+}
+
+#login-screen p,
+#denied-screen p {
+  color: var(--color-muted);
+  margin-bottom: 24px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- トグルセクション --- */
+.toggle-section {
+  text-align: center;
+}
+
+#toggle-btn {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: var(--color-success);
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+}
+
+#toggle-btn.running {
+  background: var(--color-danger);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+#elapsed-display {
+  margin-top: 16px;
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  min-height: 36px;
+}
+
+#status-label {
+  color: var(--color-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* --- 集計セクション --- */
+.quick-range-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.range-inputs input[type="date"] {
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#stats-total {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+#stats-total span {
+  color: var(--color-primary);
+}
+
+canvas#chart {
+  max-width: 100%;
+}
+
+/* --- 記録一覧 --- */
+table#records-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table#records-table th,
+table#records-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+table#records-table th {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+table#records-table input[type="datetime-local"] {
+  font-size: 12px;
+  padding: 3px 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.records-scroll {
+  overflow-x: auto;
+}
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.empty-note {
+  color: var(--color-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 16px 0;
+}
+
+h2.section-title {
+  font-size: 16px;
+  margin: 0 0 16px;
+}

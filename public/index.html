@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timekeeper - 作業時間トラッカー</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- ログイン前画面 -->
+      <div id="login-screen">
+        <h2>Timekeeper</h2>
+        <p>作業時間をトグルスイッチで記録するアプリです。<br />Googleアカウントでログインしてください。</p>
+        <button id="login-btn" class="btn-primary">Googleでログイン</button>
+      </div>
+
+      <!-- 許可されていないアカウントの場合 -->
+      <div id="denied-screen" class="hidden">
+        <h2>アクセス権限がありません</h2>
+        <p>このアプリは特定のGoogleアカウントのみ利用できます。<br />別のアカウントでログインし直してください。</p>
+        <button id="denied-logout-btn" class="btn-secondary">ログアウト</button>
+      </div>
+
+      <!-- メインアプリ -->
+      <div id="app" class="hidden">
+        <header class="app-header">
+          <h1>Timekeeper</h1>
+          <div class="user-info">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="btn-secondary btn-small">ログアウト</button>
+          </div>
+        </header>
+
+        <!-- トグルスイッチ -->
+        <section class="card toggle-section">
+          <button id="toggle-btn">作業開始</button>
+          <div id="elapsed-display">00:00:00</div>
+          <div id="status-label">停止中</div>
+        </section>
+
+        <!-- 集計・グラフ -->
+        <section class="card">
+          <h2 class="section-title">集計</h2>
+          <div class="quick-range-buttons">
+            <button class="btn-secondary btn-small" data-range="today">今日</button>
+            <button class="btn-secondary btn-small" data-range="week">今週</button>
+            <button class="btn-secondary btn-small" data-range="month">今月</button>
+          </div>
+          <div class="range-inputs">
+            <input type="date" id="range-start" />
+            <span>〜</span>
+            <input type="date" id="range-end" />
+            <button id="aggregate-btn" class="btn-primary btn-small">集計する</button>
+          </div>
+          <div id="stats-total">合計時間: <span id="stats-total-value">0時間0分</span></div>
+          <canvas id="chart" height="220"></canvas>
+        </section>
+
+        <!-- 記録一覧 -->
+        <section class="card">
+          <h2 class="section-title">記録一覧（最新200件）</h2>
+          <div class="records-scroll">
+            <table id="records-table">
+              <thead>
+                <tr>
+                  <th>開始</th>
+                  <th>終了</th>
+                  <th>時間</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="records-body"></tbody>
+            </table>
+            <div id="records-empty" class="empty-note hidden">記録がまだありません。</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
