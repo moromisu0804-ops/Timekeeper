@@ -4,6 +4,10 @@
 軽量なWebアプリです。Googleアカウントでログインし、自分専用のデータとして
 Firebase（Google Cloudのサービス）上に保存します。
 
+**セットアップはすべてブラウザの画面操作だけで完結します。**
+パソコンにソフトをインストールしたり、コマンド（PowerShellやターミナル）を
+使う必要は一切ありません。
+
 ## 主な機能
 
 - 大きな丸ボタンをタップするだけで「作業開始」「作業終了」を記録
@@ -15,96 +19,102 @@ Firebase（Google Cloudのサービス）上に保存します。
 
 ## 技術構成（参考）
 
-- **Firebase Hosting**: アプリ本体（HTML/CSS/JavaScript）の公開先
+- **GitHub Pages**: アプリ本体（HTML/CSS/JavaScript）の公開先（このリポジトリの`docs`フォルダをそのまま公開）
 - **Firebase Authentication**: Googleアカウントでのログイン機能
 - **Cloud Firestore**: 作業記録データの保存先（データベース）
 - **Chart.js**: グラフ描画ライブラリ（CDN経由で読み込み、インストール不要）
 
-ビルド（npm run build のような変換作業）は一切不要です。`public`フォルダの中身が
-そのまま公開されます。
-
 ---
 
-## セットアップ手順（初回のみ）
+## セットアップ手順（初回のみ／すべてブラウザ操作）
 
-プログラミングの知識がなくても進められるよう、順番に説明します。
+大きく分けて「① Firebaseの設定」「② GitHub Pagesで公開」の2段階です。
+順番に進めてください。
 
-### 1. Firebaseプロジェクトを作成する
+### ① Firebaseの設定（Firebaseコンソールの画面操作のみ）
+
+#### 1. Firebaseプロジェクトを作成する
 
 1. ブラウザで https://console.firebase.google.com/ を開き、Googleアカウント
    （moro.misu0804@gmail.com）でログインします。
 2. 「プロジェクトを作成」をクリックし、好きな名前（例: timekeeper）を入力して
    進めます。Googleアナリティクスは不要なのでオフのままで構いません。
 
-### 2. Googleログイン（Authentication）を有効にする
+#### 2. Googleログイン（Authentication）を有効にする
 
 1. 左メニューの「Authentication」を開き、「始める」をクリック。
 2. 「Sign-in method」タブで「Google」を選択し、有効にして保存します。
+3. 同じ画面（またはAuthenticationの「Settings」タブ）にある
+   「**承認済みドメイン (Authorized domains)**」に、後述する
+   `あなたのGitHubユーザー名.github.io` を追加します
+   （例: `moromisu0804-ops.github.io`）。
+   ※この手順は②が終わってからでも構いません。
 
-### 3. データベース（Firestore）を作成する
+#### 3. データベース（Firestore）を作成する
 
 1. 左メニューの「Firestore Database」を開き、「データベースの作成」をクリック。
 2. 本番環境モード（production mode）を選択します。
 3. リージョンは `asia-northeast1`（東京）を選ぶのがおすすめです。
 
-### 4. ウェブアプリを登録し、設定値を取得する
+#### 4. セキュリティルールを設定する（コピペのみ）
 
-1. プロジェクトのトップ画面（または「プロジェクトの設定」）で「</>」（ウェブ）
-   のアイコンをクリックし、アプリを追加します。
+1. 「Firestore Database」→ 上部タブの「ルール」を開きます。
+2. 表示されている内容をすべて選択して削除し、このリポジトリの
+   `firestore.rules` ファイルの中身をそのままコピー＆貼り付けします。
+   （GitHub上でファイルを開けばコピーできます）
+3. 「公開」ボタンをクリックします。
+
+#### 5. ウェブアプリを登録し、設定値を取得する
+
+1. プロジェクトのトップ画面（歯車アイコン →「プロジェクトの設定」）で
+   「</>」（ウェブ）のアイコンをクリックし、アプリを追加します。
 2. アプリのニックネームは何でも構いません（例: timekeeper-web）。
-   「Firebase Hosting も設定する」のチェックは入れなくてOKです。
+   「Firebase Hosting も設定する」のチェックは**入れなくてOK**です
+   （今回はGitHub Pagesを使うため）。
 3. 表示された `firebaseConfig = { apiKey: "...", ... }` の中身をコピーします。
 
-### 5. 設定ファイルを書き換える
+### ② 設定ファイルの書き換え（GitHub上でそのまま編集）
 
-このプロジェクトの `public/firebase-config.js` を開き、`firebaseConfig` の
-各値を、手順4でコピーした内容に書き換えて保存してください。
+1. GitHubでこのリポジトリを開き、`docs/firebase-config.js` を開きます。
+2. 右上の鉛筆アイコン（Edit this file）をクリックします。
+3. `firebaseConfig` の各値を、①-5でコピーした内容に書き換えます。
 
-```js
-export const firebaseConfig = {
-  apiKey: "実際の値",
-  authDomain: "実際の値",
-  projectId: "実際の値",
-  storageBucket: "実際の値",
-  messagingSenderId: "実際の値",
-  appId: "実際の値",
-};
-```
+   ```js
+   export const firebaseConfig = {
+     apiKey: "実際の値",
+     authDomain: "実際の値",
+     projectId: "実際の値",
+     storageBucket: "実際の値",
+     messagingSenderId: "実際の値",
+     appId: "実際の値",
+   };
+   ```
+
+4. 画面下部の「Commit changes...」をクリックし、`main`ブランチに直接コミットします。
 
 `ALLOWED_EMAILS` はログインを許可するメールアドレスです。初期状態で
 `moro.misu0804@gmail.com` のみ許可されています。変更する場合は、
 `firestore.rules` 内のメールアドレスも必ず同じ内容に合わせてください
 （この2箇所が一致していないと、正しくアクセス制限がかかりません）。
 
-### 6. Firebase CLIをインストールし、デプロイする
+### ③ GitHub Pagesで公開する
 
-パソコンに Node.js（https://nodejs.org/ からインストール可能）が入っていれば、
-以下をターミナル（Macなら「ターミナル」、Windowsなら「コマンドプロンプト」や
-「PowerShell」）で順番に実行します。
+1. GitHubでこのリポジトリの「Settings」タブを開きます。
+2. 左メニューの「Pages」を開きます。
+3. 「Build and deployment」の「Source」で **Deploy from a branch** を選択。
+4. 「Branch」で **main** と **/docs** を選んで「Save」をクリックします。
+5. 数分待つと、ページ上部に公開URLが表示されます
+   （形式: `https://あなたのGitHubユーザー名.github.io/Timekeeper/`）。
 
-```bash
-# Firebase CLIをインストール（初回のみ）
-npm install -g firebase-tools
-
-# Googleアカウントでログイン
-firebase login
-
-# このプロジェクトのフォルダに移動してから実行
-firebase use --add
-# → 手順1で作成したプロジェクトを選択してください
-
-# HostingとFirestoreのルールを一緒にデプロイ
-firebase deploy --only hosting,firestore:rules
-```
-
-デプロイが終わると、`https://（プロジェクトID).web.app` のようなURLが
-表示されます。そのURLにアクセスすれば、どこからでも使えるようになります。
+このURLを、①-2で「承認済みドメイン」に追加した値（`あなたのGitHubユーザー名.github.io`）
+と照らし合わせ、まだ追加していなければ今のうちに追加してください。
 
 ---
 
 ## 動作確認の手順（変更後の確認用）
 
-1. 上記URLにアクセスし、「Googleでログイン」→ 許可したアカウントでログイン。
+1. 公開されたURL（`https://…github.io/Timekeeper/`）にアクセスし、
+   「Googleでログイン」→ 許可したアカウントでログイン。
 2. 中央の緑の丸ボタン「作業開始」を押す → ボタンが赤色の「作業終了」に変わり、
    経過時間がリアルタイムで増えていくことを確認。
 3. もう一度押して「作業終了」→ 下の「記録一覧」に1件追加されることを確認。
@@ -123,6 +133,13 @@ Firebaseコンソールの「Firestore Database」を開くと、
 `users/(あなたのUID)/sessions/` の中に1回の作業ごとの記録（開始・終了時刻、
 秒数）が、`users/(あなたのUID)/meta/current` に現在ON/OFF中かどうかの状態が
 保存されているのを直接確認できます。
+
+## （参考）Firebase CLIを使った公開方法
+
+パソコンでの操作に慣れてきたら、GitHub Pagesの代わりに
+Firebase Hosting（`firebase deploy`コマンドを使う方法）で公開することも
+可能です。今回はコマンド操作を避けるため採用していませんが、
+将来的に必要であればお知らせください。
 
 ## 今後の拡張候補（今回は見送った機能）
 
