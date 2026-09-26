@@ -7,10 +7,10 @@
 // (実際のアクセス制御はfirestore.rules側のUIDチェックで行っています)。
 // メールアドレスなど個人が特定できる情報は、このファイルには一切含めません。
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyAGYhCt0EuJZBdCTSUqO1gYsgOFj8iIMT4",
+  authDomain: "timekeeper-36443.firebaseapp.com",
+  projectId: "timekeeper-36443",
+  storageBucket: "timekeeper-36443.firebasestorage.app",
+  messagingSenderId: "909638145542",
+  appId: "1:909638145542:web:6c535e66eefdba34f11587",
 };
