@@ -1,20 +1,26 @@
 rules_version = '2';
 
 // このアプリのデータは users/{ログインユーザーのUID}/... という階層にのみ保存されます。
-// 「自分自身のデータであること」に加えて「許可されたメールアドレスであること」の
-// 両方を満たす場合のみ読み書きを許可します。
+// アクセスを許可するのは、あなた自身のFirebase AuthenticationのUID
+// (Firebaseコンソール > Authentication > Users タブの「User UID」列)を
+// 持つアカウントでログインした場合のみです。
 //
-// 【重要】許可するメールアドレスを変更した場合は、
-// public/firebase-config.js の ALLOWED_EMAILS も必ず同じ内容に合わせて
-// 変更してください（片方だけ変えると、実際のアクセス制御と画面上の表示が
-// 食い違ってしまいます）。
+// メールアドレスのような個人情報は使わず、意味を持たないランダムな
+// 識別子(UID)だけでアクセス制限しているため、このファイルが公開されても
+// 個人情報が漏れることはありません。
+//
+// 【UIDを変更・追加したい場合】
+// 下の allowedUid() 関数の中の文字列を書き換えてください。
 service cloud.firestore {
   match /databases/{database}/documents {
+    function allowedUid() {
+      return "6S5vuQbar8hJkbUQN4tyyrzCHEf2";
+    }
+
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null
         && request.auth.uid == userId
-        && request.auth.token.email_verified == true
-        && request.auth.token.email in ['moro.misu0804@gmail.com'];
+        && request.auth.uid == allowedUid();
     }
   }
 }

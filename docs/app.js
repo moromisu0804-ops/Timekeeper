@@ -1,7 +1,7 @@
 // Timekeeper - トグルスイッチで作業時間を記録するアプリのメインロジック
 // ビルド不要のシンプル構成にするため、Firebase SDKはCDNのESモジュールを直接読み込んでいます。
 
-import { firebaseConfig, ALLOWED_EMAILS } from "./firebase-config.js";
+import { firebaseConfig } from "./firebase-config.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
   getAuth,
@@ -154,17 +154,26 @@ loginBtn.addEventListener("click", () => {
 logoutBtn.addEventListener("click", () => signOut(auth));
 deniedLogoutBtn.addEventListener("click", () => signOut(auth));
 
+// このアプリはメールアドレスをコード内に持ちません。
+// 「本人かどうか」の判定はFirestoreのセキュリティルール(UIDベース)に
+// 任せており、ここではGoogleログイン後にFirestoreへのアクセスが
+// 拒否された(permission-denied)かどうかで権限の有無を判断します。
+function handleAccessError(error) {
+  if (error && error.code === "permission-denied") {
+    currentUser = null;
+    cleanupListeners();
+    showScreen("denied");
+  } else {
+    console.error(error);
+  }
+}
+
 onAuthStateChanged(auth, async (user) => {
   cleanupListeners();
 
   if (!user) {
     currentUser = null;
     showScreen("login");
-    return;
-  }
-
-  if (!ALLOWED_EMAILS.includes(user.email)) {
-    showScreen("denied");
     return;
   }
 
@@ -182,12 +191,16 @@ onAuthStateChanged(auth, async (user) => {
 // ---------- トグルスイッチ ----------
 function subscribeMeta(uid) {
   const metaRef = doc(db, "users", uid, "meta", "current");
-  metaUnsub = onSnapshot(metaRef, (snap) => {
-    currentMeta = snap.exists()
-      ? snap.data()
-      : { isRunning: false, startedAt: null };
-    updateToggleUI();
-  });
+  metaUnsub = onSnapshot(
+    metaRef,
+    (snap) => {
+      currentMeta = snap.exists()
+        ? snap.data()
+        : { isRunning: false, startedAt: null };
+      updateToggleUI();
+    },
+    handleAccessError
+  );
 }
 
 function updateToggleUI() {
@@ -290,9 +303,13 @@ function subscribeRecords(uid) {
     orderBy("start", "desc"),
     limit(200)
   );
-  sessionsUnsub = onSnapshot(q, (snap) => {
-    renderRecords(snap.docs);
-  });
+  sessionsUnsub = onSnapshot(
+    q,
+    (snap) => {
+      renderRecords(snap.docs);
+    },
+    handleAccessError
+  );
 }
 
 function renderRecords(docs) {
@@ -485,6 +502,10 @@ async function runAggregate() {
 
     renderChart(labels, values);
   } catch (err) {
+    if (err.code === "permission-denied") {
+      handleAccessError(err);
+      return;
+    }
     alert("集計に失敗しました: " + err.message);
   }
 }
